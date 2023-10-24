@@ -1,5 +1,17 @@
 # Problem 2.2 ----
 
+# Original loop:
+
+for(i in 1:nrow(df)){ 
+  df$share_reject[i] <-  
+    MTweedieTests( 
+      N=df$N[i], 
+      M=df$M[i], 
+      sig=.05) 
+} 
+
+# Following is the answer for problem 2.2:
+
 # Run after rewrite the lines to use parallel computing
 
 # Load "doParallel" and "foreach"
