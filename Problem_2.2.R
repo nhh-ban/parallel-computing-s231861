@@ -1,6 +1,19 @@
 # Problem 2.2 ----
 
-# Original loop:
+# Original data ----
+
+simTweedieTest <-  
+  function(N){ 
+    t.test( 
+      rtweedie(N, mu=10000, phi=100, power=1.9), 
+      mu=10000 
+    )$p.value 
+  } 
+
+MTweedieTests <-  
+  function(N,M,sig){ 
+    sum(replicate(M,simTweedieTest(N)) < sig)/M 
+  } 
 
 for(i in 1:nrow(df)){ 
   df$share_reject[i] <-  
@@ -10,11 +23,16 @@ for(i in 1:nrow(df)){
       sig=.05) 
 } 
 
-# Following is the answer for problem 2.2:
+# Following is the answer for problem 2.2: ----
 
 # Run after rewrite the lines to use parallel computing
 
-# Load "doParallel" and "foreach"
+# Load Packages:
+library(tweedie) 
+library(ggplot2)
+
+library(tictoc) # Added for taking the time
+library(tidyverse)
 library("doParallel")
 library("foreach")
 

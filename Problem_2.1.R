@@ -1,5 +1,30 @@
 # Problem 2.1 ---- 
 
+# Original data ----
+
+simTweedieTest <-  
+  function(N){ 
+    t.test( 
+      rtweedie(N, mu=10000, phi=100, power=1.9), 
+      mu=10000 
+    )$p.value 
+  } 
+
+MTweedieTests <-  
+  function(N,M,sig){ 
+    sum(replicate(M,simTweedieTest(N)) < sig)/M 
+  } 
+
+for(i in 1:nrow(df)){ 
+  df$share_reject[i] <-  
+    MTweedieTests( 
+      N=df$N[i], 
+      M=df$M[i], 
+      sig=.05) 
+} 
+
+# Solution for problem 2.1 ----
+
 # Run the code as it is and take the time
 
 # To capture the time elapsed, need to make a function
