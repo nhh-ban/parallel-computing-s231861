@@ -76,7 +76,7 @@ TicTocLog() %>%
 
 # Run after rewrite the lines to use parallel computing
 
-# Load "doParallel"
+# Load "doParallel" and "foreach"
 library("doParallel")
 library("foreach")
 
