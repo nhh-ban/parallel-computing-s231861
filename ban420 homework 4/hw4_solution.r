@@ -2,6 +2,9 @@
 library(tweedie) 
 library(ggplot2)
 
+library(tictoc) # Added for solving problem
+library(tidyverse)
+
 simTweedieTest <-  
   function(N){ 
     t.test( 
@@ -26,6 +29,97 @@ df <-
     share_reject = NA) 
 
 
+# Problem 2.1 ---- 
+
+# Run the code as it is and take the time
+
+# To capture the time elapsed, need to make a function
+# that can then print out the result as a data frame
+TicTocLog <-
+  function() {
+    tic.log() %>%
+      unlist %>%
+      tibble(logvals = .) %>%
+      separate(logvals,
+               sep = ":",
+               into = c("Function type", "log")) %>%
+      mutate(log = str_trim(log)) %>%
+      separate(log,
+               sep = " ",
+               into = c("Seconds"),
+               extra = "drop")
+  }
+
+# Clear the tic/toc log
+tic.clearlog()
+
+# By using the tic - toc we can calc. the time to run the code
+tic("Test_1") # Name the test
+  for(i in 1:nrow(df)){ 
+    df$share_reject[i] <-  
+      MTweedieTests( 
+       N=df$N[i], 
+       M=df$M[i], 
+       sig=.05) 
+  } 
+# log = T -> Push the result in a list
+toc(log = TRUE)
+
+# To store the result:
+TicTocLog() %>%
+  knitr::kable()
+
+# Test 1: 49.617 sec elapsed
+
+
+# Problem 2.2 ----
+
+# Run after rewrite the lines to use parallel computing
+
+# Load "doParallel"
+library("doParallel")
+library("foreach")
+
+# First we compute how many cores we have -> detectCores
+maxcores <- 8
+Cores <- min(parallel::detectCores(), maxcores)
+
+# Instantiate the cores - make them work
+cl <- makeCluster(Cores)
+
+# Next - register the cluster:
+registerDoParallel(cl)
+
+# Now we can take the time (tictoc) with small adj.
+
+tic(paste0("Test_2", Cores, " cores"))
+res <- foreach(i = 1:nrow(df), 
+               .combine = rbind, 
+# Add packages needed to run the parallel
+               .packages = c('magrittr', 'dplyr', 'tweedie')
+  ) %dopar%
+  tibble(
+    # Add N and M first as it's used in the MTweedieTests function as input. 
+    N = df$N[i],
+    M = df$M[i],
+    share_reject = 
+      MTweedieTests(
+        N = df$N[i], 
+        M = df$M[i], 
+        sig = 0.05)
+  )
+
+# Stop the cluster
+stopCluster(cl)
+
+toc(log = TRUE)
+
+# Store the result:
+TicTocLog() %>%
+  knitr::kable()
+
+# Test 2: 28.113 sec elapsed
+
 for(i in 1:nrow(df)){ 
   df$share_reject[i] <-  
     MTweedieTests( 
@@ -35,8 +129,7 @@ for(i in 1:nrow(df)){
 } 
 
 
-
-
+toc(log = TRUE)
 ## Assignemnt 4 
    
 # This is one way of solving it - maybe you have a better idea? 
