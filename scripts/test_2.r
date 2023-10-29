@@ -1,7 +1,7 @@
 # Problem 2.2
 
 # Defining the number of cores in my computer
-maxcores <- 4
+maxcores <- 8
 
 #Calculating number of cores I should use
 Cores <- min(parallel::detectCores(), maxcores)

@@ -38,13 +38,12 @@ df <-
 
 
 
-# Creating a log/ table here we can save all test results
+# Create a log/ table here we can save all test results
 # Defining the log name
 TicTocLog <- 
-  # Creating a function without any variables
+  # Empty function
   function() {
-    # Using a "tictoc"-package-function that logs the timing events "tic" and
-    # "toc"
+    # Use functions from tictoc to time the function
     tic.log() %>%
       # Simplifying the list into a vector
       unlist %>%
@@ -85,3 +84,7 @@ test_3 <- source("scripts/test_3.r")
 # Print tictoc log into a nice table ----
 TicTocLog() |>
   knitr::kable()
+
+# This test shows that method 3 used on test 3 is the fastest.
+# This might be because that it forces the machine to use several cores to 
+# calc. the lines in parallel. 

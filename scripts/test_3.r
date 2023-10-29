@@ -25,7 +25,7 @@ MTweedieTests_parallel <-
   }
 
 # Defining the number of cores in my computer
-maxcores <- 4
+maxcores <- 8
 
 #Calculating number of cores I should use
 Cores <- min(parallel::detectCores(), maxcores)
